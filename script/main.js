@@ -1,11 +1,6 @@
 window.addEventListener('load', () => {
-    const audio = document.querySelector('.song');
-
-    document.body.addEventListener('click', () => {
-        if (audio.paused) {
-            audio.play().catch(error => console.log('Audio play failed:', error));
-        }
-    }, { once: true }); 
+    const audio = document.getElementById('myAudio');
+   
     const birthdayDiv = document.querySelector(".birthday-start");
     const countdownDiv = document.querySelector(".countdown");
     
@@ -68,7 +63,8 @@ window.addEventListener('load', () => {
                 cancelButtonText: 'No',
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.querySelector('.song').play();
+                    audio.play();
+                    // document.querySelector('.song').play();
                     animationTimeline();
                 } else {
                     animationTimeline();
