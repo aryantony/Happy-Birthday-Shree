@@ -13,7 +13,7 @@ window.addEventListener('load', () => {
     countdownDiv.style.display = "flex"; // Show countdown initially
 
     // Define the target date and time (Change these values as needed)
-    let targetDay = 24;  // Change to your desired day
+    let targetDay = 22;  // Change to your desired day
     let targetMonth = 3;  // Month (1 = Jan, 12 = Dec)
     let targetYear = 2025; // Change to your desired year
     let targetHour = 12;   // Change to your desired hour
@@ -43,7 +43,7 @@ window.addEventListener('load', () => {
             const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
 
             // Update the countdown display
-            countdownDiv.innerHTML = `<div>🎉✨  ${hours}h : ${minutes}m : ${seconds}s</div>`;
+            countdownDiv.innerHTML = `<div>🎉  ${hours}h : ${minutes}m : ${seconds}s</div>`;
 
         } else {
             clearInterval(timer);
