@@ -1,82 +1,80 @@
 window.addEventListener('load', () => {
     const audio = document.getElementById('myAudio');
-   
     const birthdayDiv = document.querySelector(".birthday-start");
     const countdownDiv = document.querySelector(".countdown");
-    
-    birthdayDiv.style.display = "none"; // Hide the birthday div initially
-    countdownDiv.style.display = "flex"; // Show countdown initially
 
-    // Define the target date and time (Change these values as needed)
-    let targetDay = 22;  // Change to your desired day
-    let targetMonth = 3;  // Month (1 = Jan, 12 = Dec)
-    let targetYear = 2025; // Change to your desired year
-    let targetHour = 12;   // Change to your desired hour
-    let targetMinute = 0;  // Change to your desired minute
-    let targetAMPM = "AM"; // Set "AM" or "PM"
+    birthdayDiv.style.display = "none";
+    countdownDiv.style.display = "flex";
+
+    let audioCtx; // Declare AudioContext globally but initialize it later
+
+    document.addEventListener("click", () => {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }, { once: true }); // Ensures it's initialized only once
+
+    function playTickSound() {
+        if (!audioCtx) return; // Ensure audioCtx is created
+
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        oscillator.type = "square"; 
+        oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); 
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        oscillator.start();
+        setTimeout(() => oscillator.stop(), 100); 
+    }
+
+    let targetDay = 24, targetMonth = 3, targetYear = 2025, targetHour = 12, targetMinute = 0, targetAMPM = "AM";
 
     function updateCountdown() {
         const now = new Date();
 
-        // Convert target time to 24-hour format
         let hour24 = targetHour;
-        if (targetAMPM === "PM" && targetHour !== 12) {
-            hour24 += 12;
-        }
-        if (targetAMPM === "AM" && targetHour === 12) {
-            hour24 = 0;
-        }
+        if (targetAMPM === "PM" && targetHour !== 12) hour24 += 12;
+        if (targetAMPM === "AM" && targetHour === 12) hour24 = 0;
 
-        // Create the target date object
         const targetDate = new Date(targetYear, targetMonth - 1, targetDay, hour24, targetMinute, 0, 0);
         const timeDiff = targetDate - now;
 
         if (timeDiff > 0) {
-            // Calculate remaining time
             const hours = Math.floor(timeDiff / (1000 * 60 * 60));
             const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
 
-            // Update the countdown display
             countdownDiv.innerHTML = `<div>🎉  ${hours}h : ${minutes}m : ${seconds}s</div>`;
+
+            playTickSound(); // Play ticking sound
 
         } else {
             clearInterval(timer);
-
-            // Hide countdown and show the birthday div
             countdownDiv.style.display = "none";
             birthdayDiv.style.display = "block";
             birthdayDiv.style.opacity = "0";
             birthdayDiv.style.transition = "opacity 1.5s ease-in-out";
-            setTimeout(() => {
-                birthdayDiv.style.opacity = "1";
-            }, 100);
+            setTimeout(() => birthdayDiv.style.opacity = "1", 100);
 
-            // Show SweetAlert when time is reached
             Swal.fire({
                 title: 'Are you ready to celebrate your Birthday Shree??',
                 icon: 'warning',
-                showCancelButton: false,
                 confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes',
-               
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    audio.play();
-                    // document.querySelector('.song').play();
-                    animationTimeline();
-                } else {
-                    audio.play();
-                    animationTimeline();
-                }
+            }).then(() => {
+                audio.play();
+                animationTimeline();
             });
         }
     }
 
-    // Update the countdown every second
     const timer = setInterval(updateCountdown, 1000);
 });
+
 
 
 
@@ -173,6 +171,8 @@ const animationTimeline = () => {
     // Restart Animation on click
     const replyBtn = document.getElementById("replay");
     replyBtn.addEventListener("click", () => {
+        const audio = document.getElementById('myAudio');
+       audio.play()
         tl.restart();
     });
 };
